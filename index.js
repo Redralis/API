@@ -15,45 +15,49 @@ app.all('*', (req, res, next) => {
   next()
 });
 
-app.post('/api/movie', (req, res) => {
-  let movie = req.body;
-  console.log(movie);
+//UC-201 - Register as a new user
+app.post('/api/user', (req, res) => {
+  let user = req.body;
+  console.log(user);
   id++;
-  movie = {
+  user = {
     id,
-    ...movie,
+    ...user,
   };
-  database.push(movie);
+  database.push(user);
   console.log(database)
   res.status(201).json({
     status: 201,
-    result: movie,
+    result: user,
   });
 });
 
-app.get('/api/movie', (req, res) => {
+//UC-202 - Get all users
+app.get('/api/user', (req, res) => {
   res.status(200).json({
     status: 200,
     result: database,
   });
 });
 
-app.get('/api/movie/:movieId', (req, res) => {
-  const movieId = req.params.movieId;
-  let movie = database.filter((item) => (item.id == movieId));
-  if (movie.length > 0) {
+//UC-204 - Get single user by ID
+app.get('/api/user/:userId', (req, res) => {
+  const userId = req.params.userId;
+  let user = database.filter((item) => (item.id == userId));
+  if (user.length > 0) {
     res.status(200).json({
       status: 200,
-      result: movie,
+      result: user,
     });
   } else {
     res.status(404).json({
       status: 404,
-      result: `Movie with ID ${movieId} not found`,
+      result: `User with ID ${userId} not found`,
     });
   }
 });
 
+//Standard response
 app.get('/', (req, res) => {
   res.status(200).json({
     status: 200,
@@ -61,6 +65,7 @@ app.get('/', (req, res) => {
   });
 });
 
+//Response for incorrect request
 app.all('*', (req, res) => {
   res.status(404).json({
     status: 404,
