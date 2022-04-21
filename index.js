@@ -26,6 +26,9 @@ app.post('/api/user', (req, res) => {
   //If the new user's email is unique, the user will be pushed to the database. Otherwise, an error will be returned.
   if (!database.some(e => e.emailAdress === emailAdress)) {
     id++;
+    while (database.some(e => e.id === id)) {
+      id++;
+    }
     database.push(user);
     console.log(database)
     res.status(201).json({
