@@ -73,6 +73,28 @@ app.get('/api/user/:userId', (req, res) => {
   }
 });
 
+//UC-205 - Update a single user
+app.put('/api/user/:userId', (req, res) => {
+  const userId = req.params.userId;
+  let user = database.filter((item) => (item.id == userId));
+  if (user.length > 0) {
+    index = database.findIndex((obj => obj.id == userId));
+    user = req.body;
+    database[index] = user;
+    console.log(user);
+    res.status(200).json({
+      status: 200,
+      result: user,
+    });
+  } else {
+    res.status(404).json({
+      status: 404,
+      result: `User with ID ${userId} not found`,
+    });
+  }
+});
+
+
 //Standard response
 app.get('/', (req, res) => {
   res.status(200).json({
