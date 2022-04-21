@@ -94,6 +94,24 @@ app.put('/api/user/:userId', (req, res) => {
   }
 });
 
+//UC-206 - Delete a user
+app.delete('/api/user/:userId', (req, res) => {
+  const userId = req.params.userId;
+  let user = database.filter((item) => (item.id == userId));
+  if (user.length > 0) {
+    index = database.findIndex((obj => obj.id == userId));
+    database.splice(index, 1);
+    res.status(200).json({
+      status: 200,
+      result: `User with ID ${userId} succesfully deleted`,
+    });
+  } else {
+    res.status(404).json({
+      status: 404,
+      result: `User with ID ${userId} not found`,
+    });
+  }
+});
 
 //Standard response
 app.get('/', (req, res) => {
