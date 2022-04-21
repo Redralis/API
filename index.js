@@ -48,6 +48,14 @@ app.get('/api/user', (req, res) => {
   });
 });
 
+//UC-203 - Request personal user profile
+app.get('/api/user/profile', (req, res) => {
+  res.status(401).json({
+    status: 401,
+    result: 'Endpoint not yet realised',
+  });
+});
+
 //UC-204 - Get single user by ID
 app.get('/api/user/:userId', (req, res) => {
   const userId = req.params.userId;
