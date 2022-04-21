@@ -18,18 +18,26 @@ app.all('*', (req, res, next) => {
 //UC-201 - Register as a new user
 app.post('/api/user', (req, res) => {
   let user = req.body;
-  console.log(user);
-  id++;
+  const emailAdress = user.emailAdress;
   user = {
     id,
     ...user,
   };
-  database.push(user);
-  console.log(database)
-  res.status(201).json({
-    status: 201,
-    result: user,
-  });
+  //If the new user's email is unique, the user will be pushed to the database. Otherwise, an error will be returned.
+  if (!database.some(e => e.emailAdress === emailAdress)) {
+    id++;
+    database.push(user);
+    console.log(database)
+    res.status(201).json({
+      status: 201,
+      result: user,
+    });
+  } else {
+    res.status(422).json({
+      status: 422,
+      result: `Email address ${emailAdress} is already registered.`
+    });
+  }
 });
 
 //UC-202 - Get all users
