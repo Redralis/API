@@ -79,10 +79,19 @@ app.get('/api/user/:userId', (req, res) => {
 //UC-205 - Update a single user
 app.put('/api/user/:userId', (req, res) => {
   const userId = req.params.userId;
+  let oldId = id;
+  id = userId;
   let user = database.filter((item) => (item.id == userId));
   if (user.length > 0) {
     index = database.findIndex((obj => obj.id == userId));
     user = req.body;
+    if (!user.id >= 0) {
+      user = {
+        id,
+        ...user,
+      };
+    }
+    id = oldId;
     database[index] = user;
     console.log(user);
     res.status(200).json({
