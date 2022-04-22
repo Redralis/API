@@ -53,6 +53,7 @@ app.get('/api/user', (req, res) => {
 
 //UC-203 - Request personal user profile
 app.get('/api/user/profile', (req, res) => {
+  //This function is a WIP, so it will only return a message stating this.
   res.status(401).json({
     status: 401,
     result: 'Endpoint not yet realised',
@@ -85,6 +86,7 @@ app.put('/api/user/:userId', (req, res) => {
   if (user.length > 0) {
     index = database.findIndex((obj => obj.id == userId));
     user = req.body;
+    //If no id was specified during the update, the updated user's id will be set to its previous one.
     if (!user.id >= 0) {
       user = {
         id,
