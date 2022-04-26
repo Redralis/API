@@ -1,3 +1,5 @@
+const assert = require('assert');
+const { nextTick } = require('process');
 let database = [];
 let id = 0;
 
@@ -7,6 +9,27 @@ let controller = {
           status: 200,
           result: 'Hello World!',
       });
+    },
+
+    validateUser: (req, res, next) => {
+        let user = req.body;
+        let{firstName, lastName, street, city, password, emailAdress} = user;
+        try {
+          assert(typeof firstName === 'string', 'First name must be a string');
+          assert(typeof lastName === 'string', 'Last name must be a string');
+          assert(typeof street === 'string', 'Street must be a string');
+          assert(typeof city === 'string', 'City must be a string');
+          assert(typeof password === 'string', 'Password must be a string');
+          assert(typeof emailAdress === 'string', 'Email adress must be a string');
+          next();
+        } 
+        catch(err) {
+          console.log(err);
+          res.status(400).json({
+              status: 400,
+              result: err.toString()
+          })
+        }
     },
 
     addUser: (req, res) => {
