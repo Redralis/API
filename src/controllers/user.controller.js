@@ -1,5 +1,4 @@
 const assert = require('assert');
-const { nextTick } = require('process');
 let database = [];
 let id = 0;
 
@@ -22,17 +21,16 @@ let controller = {
           assert(typeof password === 'string', 'Password must be a string');
           assert(typeof emailAdress === 'string', 'Email adress must be a string');
           next();
-        } 
-        catch(err) {
-          console.log(err);
-          res.status(400).json({
-              status: 400,
-              result: err.toString()
-          })
+        } catch(err) {
+          const error = {
+            status: 400,
+            result : err.message,
+          }
+          next(error);
         }
     },
 
-    addUser: (req, res) => {
+    addUser: (req, res, next) => {
       let user = req.body;
       const emailAdress = user.emailAdress;
       user = {
@@ -52,10 +50,11 @@ let controller = {
           result: user,
         });
       } else {
-        res.status(422).json({
+        const error = {
           status: 422,
-          result: `Email address ${emailAdress} is already registered.`
-        });
+          result: `Email address ${emailAdress} is already registered.`,
+        }
+        next(error);
       }
     },
 
@@ -74,7 +73,7 @@ let controller = {
       });
     },
 
-    getUserById: (req, res) => {
+    getUserById: (req, res, next) => {
       const userId = req.params.userId;
       let user = database.filter((item) => (item.id == userId));
       if (user.length > 0) {
@@ -83,14 +82,15 @@ let controller = {
           result: user,
         });
       } else {
-        res.status(404).json({
+        const error = {
           status: 404,
           result: `User with ID ${userId} not found`,
-        });
+        }
+        next(error);
       }
     },
 
-    updateUser: (req, res) => {
+    updateUser: (req, res, next) => {
       const userId = req.params.userId;
       let oldId = id;
       id = userId;
@@ -113,14 +113,15 @@ let controller = {
           result: user,
         });
       } else {
-        res.status(404).json({
+        const error = {
           status: 404,
           result: `User with ID ${userId} not found`,
-        });
+        }
+        next(error);
       }
     },
 
-    deleteUser: (req, res) => {
+    deleteUser: (req, res, next) => {
       const userId = req.params.userId;
       let user = database.filter((item) => (item.id == userId));
       if (user.length > 0) {
@@ -131,10 +132,11 @@ let controller = {
           result: `User with ID ${userId} succesfully deleted`,
         });
       } else {
-        res.status(404).json({
+        const error = {
           status: 404,
           result: `User with ID ${userId} not found`,
-        });
+        }
+        next(error);
       }
     }
 }
