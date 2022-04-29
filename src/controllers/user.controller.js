@@ -149,10 +149,23 @@ let controller = {
                 connection.query("UPDATE user SET id = " + user.id + ", firstName = '" + user.firstName + 
                 "', lastName = '" + user.lastName + "', street = '" + user.street + "', city = '" + user.city +
                 "', isActive = '" + isActive + "', emailAdress = '" + user.emailAdress + "', password = '" +
-                user.password + "', phoneNumber = '" + user.phoneNumber + "' WHERE id = " + userId)
-                res.status(200).json({
-                  status: 200,
-                  results: `User with ID ${userId} successfully updated`,
+                user.password + "', phoneNumber = '" + user.phoneNumber + "' WHERE id = " + userId,
+                function(error) {
+                  if (error) {
+                    if(error.errno==1062){   
+                      res.status(422).json({
+                        status: 422,
+                        result: 'Email address is already registered',
+                      });
+                    } else {
+                      throw error;
+                    }
+                  } else {
+                    res.status(200).json({
+                      status: 200,
+                      results: `User with ID ${userId} successfully updated`,
+                    })
+                  }
                 })
               } else {
                 const error = {
