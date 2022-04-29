@@ -1,18 +1,12 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index');
-let database = [];
 
 chai.should();
 chai.use(chaiHttp);
 
 describe('Manage users', () => {
   describe('UC-201 - Register as a new user /api/user', () => {
-    beforeEach((done) => {
-      database = [];
-      done();
-    });
-
     it('TC-201-1 - When a required input is missing, a valid error should be returned', (done) => {
         chai
         .request(server)
