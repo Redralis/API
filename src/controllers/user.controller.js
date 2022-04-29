@@ -9,7 +9,7 @@ let controller = {
       });
     },
 
-    validateUser: (req, res, next) => {
+    validateNewUser: (req, res, next) => {
         let user = req.body;
         let{firstName, lastName, street, city, password, emailAdress} = user;
         try {
@@ -28,6 +28,28 @@ let controller = {
           next(error);
         }
     },
+
+    validateUpdatedUser: (req, res, next) => {
+      let user = req.body;
+      let{firstName, lastName, street, city, isActive, password, emailAdress, phoneNumber} = user;
+      try {
+        assert(typeof firstName === 'string', 'First name must be a string');
+        assert(typeof lastName === 'string', 'Last name must be a string');
+        assert(typeof street === 'string', 'Street must be a string');
+        assert(typeof city === 'string', 'City must be a string');
+        assert(typeof isActive === 'boolean', 'isActive must be a boolean');
+        assert(typeof password === 'string', 'Password must be a string');
+        assert(typeof emailAdress === 'string', 'Email adress must be a string');
+        assert(typeof phoneNumber === 'string', 'Phone number must be a string');
+        next();
+      } catch(err) {
+        const error = {
+          status: 400,
+          result : err.message,
+        }
+        next(error);
+      }
+  },
 
     addUser: (req, res, next) => {
       let user = req.body;
@@ -85,69 +107,90 @@ let controller = {
 
     getUserById: (req, res, next) => {
       const userId = req.params.userId;
-      let user = database.filter((item) => (item.id == userId));
-      if (user.length > 0) {
-        res.status(200).json({
-          status: 200,
-          result: user,
-        });
-      } else {
-        const error = {
-          status: 404,
-          result: `User with ID ${userId} not found`,
-        }
-        next(error);
-      }
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err
+        connection.query(
+            'SELECT * FROM user WHERE id = ' + userId,
+            function (error, results) {
+              connection.release()
+              if (error) throw error
+              if (results.length > 0) {
+                res.status(200).json({
+                  status: 200,
+                  results: results,
+                })
+              } else {
+                const error = {
+                  status: 404,
+                  result: `User with ID ${userId} not found`,
+                }
+                next(error);
+              }
+            }
+        )
+      })
     },
 
     updateUser: (req, res, next) => {
       const userId = req.params.userId;
-      let oldId = id;
-      id = userId;
-      let user = database.filter((item) => (item.id == userId));
-      if (user.length > 0) {
-        index = database.findIndex((obj => obj.id == userId));
-        user = req.body;
-        //If no id was specified during the update, the updated user's id will be set to its previous one.
-        if (!user.id >= 0) {
-          user = {
-            id,
-            ...user,
-          };
-        }
-        id = oldId;
-        database[index] = user;
-        console.log(user);
-        res.status(200).json({
-          status: 200,
-          result: user,
-        });
-      } else {
-        const error = {
-          status: 404,
-          result: `User with ID ${userId} not found`,
-        }
-        next(error);
+      let user = req.body;
+      let isActive = 0;
+      if (user.isActive) {
+        isActive = 1;
       }
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err
+        connection.query(
+            'SELECT * FROM user WHERE id = ' + userId,
+            function (error, results) {
+              connection.release()
+              if (error) throw error
+              if (results.length > 0) {
+                connection.query("UPDATE user SET id = " + user.id + ", firstName = '" + user.firstName + 
+                "', lastName = '" + user.lastName + "', street = '" + user.street + "', city = '" + user.city +
+                "', isActive = '" + isActive + "', emailAdress = '" + user.emailAdress + "', password = '" +
+                user.password + "', phoneNumber = '" + user.phoneNumber + "' WHERE id = " + userId)
+                res.status(200).json({
+                  status: 200,
+                  results: `User with ID ${userId} successfully updated`,
+                })
+              } else {
+                const error = {
+                  status: 404,
+                  result: `User with ID ${userId} not found`,
+                }
+                next(error);
+              }
+            }
+        )
+      })
     },
 
     deleteUser: (req, res, next) => {
       const userId = req.params.userId;
-      let user = database.filter((item) => (item.id == userId));
-      if (user.length > 0) {
-        index = database.findIndex((obj => obj.id == userId));
-        database.splice(index, 1);
-        res.status(200).json({
-          status: 200,
-          result: `User with ID ${userId} succesfully deleted`,
-        });
-      } else {
-        const error = {
-          status: 404,
-          result: `User with ID ${userId} not found`,
-        }
-        next(error);
-      }
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err
+        connection.query(
+            'SELECT * FROM user WHERE id = ' + userId,
+            function (error, results) {
+              connection.release()
+              if (error) throw error
+              if (results.length > 0) {
+                connection.query('DELETE FROM user WHERE id = ' + userId)
+                res.status(200).json({
+                  status: 200,
+                  results: `User with ID ${userId} successfully deleted`,
+                })
+              } else {
+                const error = {
+                  status: 404,
+                  result: `User with ID ${userId} not found`,
+                }
+                next(error);
+              }
+            }
+        )
+      })
     }
 }
 
