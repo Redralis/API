@@ -31,8 +31,9 @@ let controller = {
 
     validateUpdatedUser: (req, res, next) => {
       let user = req.body;
-      let{firstName, lastName, street, city, isActive, password, emailAdress, phoneNumber} = user;
+      let{id, firstName, lastName, street, city, isActive, password, emailAdress, phoneNumber} = user;
       try {
+        assert(typeof id === 'number', 'ID must be a number');
         assert(typeof firstName === 'string', 'First name must be a string');
         assert(typeof lastName === 'string', 'Last name must be a string');
         assert(typeof street === 'string', 'Street must be a string');
