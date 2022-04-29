@@ -155,7 +155,7 @@ let controller = {
                     if(error.errno==1062){   
                       res.status(422).json({
                         status: 422,
-                        result: 'Email address is already registered',
+                        result: 'Email address is already registered, or id already exists',
                       });
                     } else {
                       throw error;
