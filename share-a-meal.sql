@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.4.22-MariaDB, for Win64 (AMD64)
 --
--- Host: db-mysql-ams3-37313-do-user-2119860-0.b.db.ondigitalocean.com    Database: share-a-meal
+-- Host: db-mysql-ams3-37313-do-user-2119860-0.b.db.ondigitalocean.com    Database: share_a_meal
 -- ------------------------------------------------------
 -- Server version	8.0.27
 
