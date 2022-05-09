@@ -1,14 +1,51 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../../index');
+process.env.DB_DATABASE = process.env.DB_DATABASE || 'share_a_meal_testdb'
 
-chai.should();
-chai.use(chaiHttp);
+const chai = require('chai')
+const chaiHttp = require('chai-http')
+const server = require('../../index')
+const assert = require('assert')
+require('dotenv').config()
+const dbconnection = require('../../database/dbconnection')
+
+chai.should()
+chai.use(chaiHttp)
+
+const CLEAR_DB =
+  'DELETE IGNORE FROM `meal`; DELETE IGNORE FROM `meal_participants_user`; DELETE IGNORE FROM `user`;'
+
+const INSERT_USER =
+  'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+  '(1, "John", "Doe", "john.doe@mail.com", "secret", "Lovensdijkstraat 73", "Breda");'
 
 console.log = function() {};
 
 describe('Manage users', () => {
+  before((done) => {
+    console.log('before: hier zorg je eventueel dat de precondities correct zijn')
+    console.log('before done')
+    done()
+  })
+
   describe('UC-201 - Register as a new user /api/user', () => {
+    beforeEach((done) => {
+      console.log('beforeEach called')
+      //Recreating the testdatabase so the tests can be executed.
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err // not connected!
+        connection.query(
+            CLEAR_DB + INSERT_USER,
+            function (error, results, fields) {
+                // When done with the connection, release it.
+                connection.release()
+                // Handle error after the release.
+                if (error) throw error
+                console.log('beforeEach done')
+                done()
+            }
+        )
+      })
+    })
+
     it('TC-201-1 - When a required input is missing, a valid error should be returned', (done) => {
       chai
       .request(server)
@@ -19,7 +56,7 @@ describe('Manage users', () => {
         "street": "Hogeschoollaan 61",
         "city": "Breda",
         "password": "secret",
-        "emailAdress": "john.doe@mail.com"
+        "emailAdress": "jane.doe@mail.com"
       })
       .end((err, res) => {
         res.should.be.an('object');
@@ -35,11 +72,12 @@ describe('Manage users', () => {
       .request(server)
       .post('/api/user')
       .send({
-        "firstName": "John",
+        "firstName": "Jane",
         "lastName": "Doe",
         "street": "Hogeschoollaan 61",
         "city": "Breda",
         "password": "secret",
+        //Email adress should be a string
         "emailAdress": 0
       })
       .end((err, res) => {
@@ -56,12 +94,13 @@ describe('Manage users', () => {
       .request(server)
       .post('/api/user')
       .send({
-        "firstName": "John",
+        "firstName": "Jane",
         "lastName": "Doe",
         "street": "Hogeschoollaan 61",
         "city": "Breda",
+        //Password should be a string
         "password": 0,
-        "emailAdress": "john.doe@mail.com"
+        "emailAdress": "jane.doe@mail.com"
       })
       .end((err, res) => {
         res.should.be.an('object');
@@ -82,14 +121,7 @@ describe('Manage users', () => {
         "street": "Hogeschoollaan 61",
         "city": "Breda",
         "password": "secret",
-        "emailAdress": "john.doe@mail.com"
-      })
-      .send({
-        "firstName": "John",
-        "lastName": "Doe",
-        "street": "Hogeschoollaan 61",
-        "city": "Breda",
-        "password": "secret",
+        //john.doe@mail.com is already registered
         "emailAdress": "john.doe@mail.com"
       })
       .end((err, res) => {
@@ -100,9 +132,49 @@ describe('Manage users', () => {
         done();
       })
     });
+
+    it('TC-201-5 - When a new user is successfully registered, a valid response should be returned', (done) => {
+      chai
+      .request(server)
+      .post('/api/user')
+      .send({
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "street": "Hogeschoollaan 61",
+        "city": "Breda",
+        "password": "secret",
+        "emailAdress": "jane.doe@mail.com"
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {status, result} = res.body;
+        status.should.equals(201);
+        result.should.be.an('object')
+        done();
+      })
+    });
   });
 
   describe('UC-202 - Show all users /api/user', () => {
+    beforeEach((done) => {
+      console.log('beforeEach called')
+      //Recreating the testdatabase so the tests can be executed.
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err // not connected!
+        connection.query(
+            CLEAR_DB + INSERT_USER,
+            function (error, results, fields) {
+                // When done with the connection, release it.
+                connection.release()
+                // Handle error after the release.
+                if (error) throw error
+                console.log('beforeEach done')
+                done()
+            }
+        )
+      })
+    })
+
     it('TC-202-1 - When a request is sent, a response containing all users should be returned', (done) => {
       chai
       .request(server)
@@ -117,6 +189,25 @@ describe('Manage users', () => {
   });
 
   describe('UC-204 - Show a single user /api/user/{ID}', () => {
+    beforeEach((done) => {
+      console.log('beforeEach called')
+      //Recreating the testdatabase so the tests can be executed.
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err // not connected!
+        connection.query(
+            CLEAR_DB + INSERT_USER,
+            function (error, results, fields) {
+                // When done with the connection, release it.
+                connection.release()
+                // Handle error after the release.
+                if (error) throw error
+                console.log('beforeEach done')
+                done()
+            }
+        )
+      })
+    })
+
     it('TC-204-2 - When an id that is not tied to a user is passed to the request, a valid error should be returned', (done) => {
       chai
       .request(server)
@@ -131,7 +222,7 @@ describe('Manage users', () => {
       })
     });
 
-    it('TC-204-3 - When a user is successfully requested, a valid error should be returned', (done) => {
+    it('TC-204-3 - When a user is successfully requested, a valid response should be returned', (done) => {
       chai
       .request(server)
       .get('/api/user/1')
@@ -145,6 +236,25 @@ describe('Manage users', () => {
   });
 
   describe('UC-205 - Edit users /api/user/{ID}', () => {
+    beforeEach((done) => {
+      console.log('beforeEach called')
+      //Recreating the testdatabase so the tests can be executed.
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err // not connected!
+        connection.query(
+            CLEAR_DB + INSERT_USER,
+            function (error, results, fields) {
+                // When done with the connection, release it.
+                connection.release()
+                // Handle error after the release.
+                if (error) throw error
+                console.log('beforeEach done')
+                done()
+            }
+        )
+      })
+    })
+
     it('TC-205-1 - When a required input is missing, a valid error should be returned', (done) => {
       chai
       .request(server)
@@ -182,6 +292,7 @@ describe('Manage users', () => {
         "isActive": false,
         "password": "secret",
         "emailAdress": "lucas.dekleijn@mail.com",
+        //Phone number should be a string
         "phoneNumber": 0
       })
       .end((err, res) => {
@@ -243,6 +354,25 @@ describe('Manage users', () => {
     });
 
     describe('UC-206 - Delete users /api/user/{ID}', () => {
+      beforeEach((done) => {
+        console.log('beforeEach called')
+        //Recreating the testdatabase so the tests can be executed.
+        dbconnection.getConnection(function (err, connection) {
+          if (err) throw err // not connected!
+          connection.query(
+              CLEAR_DB + INSERT_USER,
+              function (error, results, fields) {
+                  // When done with the connection, release it.
+                  connection.release()
+                  // Handle error after the release.
+                  if (error) throw error
+                  console.log('beforeEach done')
+                  done()
+              }
+          )
+        })
+      })
+
       it('TC-206-1 - When an id that is not tied to a user is passed to the request, a valid error should be returned', (done) => {
         chai
         .request(server)
@@ -256,7 +386,19 @@ describe('Manage users', () => {
           done();
         })
       });
-    });
 
+      it('TC-206-4 - When a user is successfully deleted, a valid error should be returned', (done) => {
+        chai
+        .request(server)
+        .delete('/api/user/1')
+        .end((err, res) => {
+          res.should.be.an('object');
+          let {status, results} = res.body;
+          status.should.equals(200);
+          results.should.be.a('string').that.equals("User with ID 1 successfully deleted");
+          done();
+        })
+      });
+    });
   });
 });
