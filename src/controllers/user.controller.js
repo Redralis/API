@@ -62,8 +62,8 @@ let controller = {
           function (error) {
             if (error) {
               if(error.errno==1062){   
-                res.status(422).json({
-                  status: 422,
+                res.status(409).json({
+                  status: 409,
                   result: 'Email address is already registered',
                 });
               } else {
@@ -170,7 +170,7 @@ let controller = {
                 })
               } else {
                 const error = {
-                  status: 404,
+                  status: 400,
                   result: `User with ID ${userId} not found`,
                 }
                 next(error);
@@ -197,7 +197,7 @@ let controller = {
                 })
               } else {
                 const error = {
-                  status: 404,
+                  status: 400,
                   result: `User with ID ${userId} not found`,
                 }
                 next(error);

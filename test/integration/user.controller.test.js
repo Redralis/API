@@ -17,6 +17,7 @@ const INSERT_USER =
   'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
   '(1, "John", "Doe", "john.doe@mail.com", "secret", "Lovensdijkstraat 73", "Breda");'
 
+//This line removes console.log, so that you can see the list of tests more easily.
 console.log = function() {};
 
 describe('Manage users', () => {
@@ -127,7 +128,7 @@ describe('Manage users', () => {
       .end((err, res) => {
         res.should.be.an('object');
         let {status, result} = res.body;
-        status.should.equals(422);
+        status.should.equals(409);
         result.should.be.a('string').that.equals('Email address is already registered');
         done();
       })
@@ -323,7 +324,7 @@ describe('Manage users', () => {
       .end((err, res) => {
         res.should.be.an('object');
         let {status, result} = res.body;
-        status.should.equals(404);
+        status.should.equals(400);
         result.should.be.a('string').that.equals('User with ID 0 not found');
         done();
       })
@@ -381,7 +382,7 @@ describe('Manage users', () => {
         .end((err, res) => {
           res.should.be.an('object');
           let {status, result} = res.body;
-          status.should.equals(404);
+          status.should.equals(400);
           result.should.be.a('string').that.equals('User with ID 0 not found');
           done();
         })
