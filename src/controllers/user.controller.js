@@ -81,10 +81,25 @@ let controller = {
     },
 
     getAllUsers: (req, res) => {
+      let {firstName, isActive} = req.query
+      console.log(`firstName = ${firstName} isActive = ${isActive}`)
+
+      let queryString = 'SELECT * FROM user'
+      if (firstName || isActive) {
+        queryString += ' WHERE '
+        if (firstName) {
+          queryString += 'firstName LIKE ?'
+        }
+      }
+      queryString += ';'
+      console.log(queryString)
+
+      firstName = '%' + firstName + '%'
+
       dbconnection.getConnection(function (err, connection) {
           if (err) throw err
           connection.query(
-              'SELECT * FROM user;',
+            queryString, [firstName, isActive],
               function (error, results) {
                 connection.release()
                 if (error) throw error
