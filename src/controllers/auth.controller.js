@@ -71,7 +71,7 @@ module.exports = {
             })
           } else if (payload) {
             //User has access. Add userId from payload to the request for every subsequent endpoint.
-            req.userId = payload.id
+            req.userId = payload.userId
             next()
           }
         })

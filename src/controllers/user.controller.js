@@ -114,11 +114,28 @@ let controller = {
     },
 
     getPersonalProfile: (req, res) => {
-      //This function is a WIP, so it will only return a message stating this.
-      res.status(401).json({
-        status: 401,
-        result: 'Endpoint not yet realised',
-      });
+      dbconnection.getConnection(function (err, connection) {
+        if (err) throw err
+        connection.query(
+            'SELECT * FROM user WHERE id = ' + req.userId,
+            function (error, results) {
+              connection.release()
+              if (error) throw error
+              if (results.length > 0) {
+                res.status(200).json({
+                  status: 200,
+                  results: results,
+                })
+              } else {
+                const error = {
+                  status: 404,
+                  result: `User with ID ${userId} not found`,
+                }
+                next(error);
+              }
+            }
+        )
+      })
     },
 
     getUserById: (req, res, next) => {
