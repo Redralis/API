@@ -4,6 +4,7 @@ require('dotenv').config();
 const port = process.env.PORT;
 const bodyParser = require('body-parser');
 const userRouter = require('./src/routes/user.routes');
+const authRouter = require ('./src/routes/auth.routes')
 const { env } = require('process');
 
 app.use(bodyParser.json());
@@ -15,6 +16,7 @@ app.all('*', (req, res, next) => {
 });
 
 app.use(userRouter);
+app.use(authRouter)
 
 //Response for incorrect request
 app.all('*', (req, res) => {

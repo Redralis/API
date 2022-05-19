@@ -2,6 +2,7 @@ const express = require('express');
 const { validateUser } = require('../controllers/user.controller');
 const router = express.Router();
 const userController = require('../controllers/user.controller')
+const authController = require('../controllers/auth.controller')
 
 //Standard response
 router.get('/', userController.standardResponse);
@@ -10,18 +11,18 @@ router.get('/', userController.standardResponse);
 router.post('/api/user', userController.validateNewUser, userController.addUser);
   
 //UC-202 - Get all users
-router.get('/api/user', userController.getAllUsers);
+router.get('/api/user', authController.validate, userController.getAllUsers);
 
 //UC-203 - Request personal user profile
-router.get('/api/user/profile', userController.getPersonalProfile);
+router.get('/api/user/profile', authController.validate, userController.getPersonalProfile);
 
 //UC-204 - Get single user by ID
-router.get('/api/user/:userId', userController.getUserById);
+router.get('/api/user/:userId', authController.validate, userController.getUserById);
 
 //UC-205 - Update a single user
-router.put('/api/user/:userId', userController.validateUpdatedUser, userController.updateUser);
+router.put('/api/user/:userId', authController.validate, userController.validateUpdatedUser, userController.updateUser);
 
 //UC-206 - Delete a user
-router.delete('/api/user/:userId', userController.deleteUser);
+router.delete('/api/user/:userId', authController.validate, userController.deleteUser);
 
 module.exports = router;
