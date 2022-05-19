@@ -39,6 +39,10 @@ module.exports = {
                     });
                   } else {
                     //Password did not match.
+                    res.status(401).json({
+                      status: 401,
+                      result: 'Incorrect password!'
+                    })
                   }
                 } else {
                   //No user was found with this email address.
