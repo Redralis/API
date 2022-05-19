@@ -30,9 +30,10 @@ module.exports = {
                       if (err) console.log(err)
                       if (token) {
                         console.log(token)
+                        user.token = token
                         res.status(200).json({
                           status: 200,
-                          results: token
+                          result: user,
                         })
                       }
                     });
