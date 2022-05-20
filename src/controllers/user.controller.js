@@ -1,5 +1,7 @@
 const dbconnection = require('../../database/dbconnection')
 const assert = require('assert')
+const reEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+const rePass = /^[a-zA-Z0-9]{4,}$/
 
 let controller = {
     standardResponse: (req, res) => {
@@ -18,7 +20,9 @@ let controller = {
           assert(typeof street === 'string', 'Street must be a string');
           assert(typeof city === 'string', 'City must be a string');
           assert(typeof password === 'string', 'Password must be a string');
+          assert.match(password, rePass, "Password must be valid")
           assert(typeof emailAdress === 'string', 'Email adress must be a string');
+          assert.match(emailAdress, reEmail, 'Email adress must be valid')
           next();
         } catch(err) {
           const error = {
@@ -40,7 +44,9 @@ let controller = {
         assert(typeof city === 'string', 'City must be a string');
         assert(typeof isActive === 'boolean', 'isActive must be a boolean');
         assert(typeof password === 'string', 'Password must be a string');
+        assert.match(password, rePass, "Password must be valid")
         assert(typeof emailAdress === 'string', 'Email adress must be a string');
+        assert.match(emailAdress, reEmail, 'Email adress must be valid')
         assert(typeof phoneNumber === 'string', 'Phone number must be a string');
         next();
       } catch(err) {

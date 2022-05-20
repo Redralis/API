@@ -81,5 +81,25 @@ module.exports = {
           }
         })
       }
-    }
+    },
+
+    validateInput: (req, res, next) => {
+      let user = req.body;
+      const reEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+      const rePass = /^[a-zA-Z0-9]{4,}$/
+      let{emailAdress, password} = user;
+      try {
+        assert(typeof emailAdress === 'string', 'Email adress must be a string');
+        assert.match(emailAdress, reEmail, 'Email adress must be valid')
+        assert(typeof password === 'string', 'Password must be a string');
+        assert.match(password, rePass, "Password must be valid")
+        next();
+      } catch(err) {
+        const error = {
+          status: 400,
+          result : err.message
+        }
+        next(error);
+      }
+    },
 }
