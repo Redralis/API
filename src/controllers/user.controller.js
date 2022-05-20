@@ -2,6 +2,7 @@ const dbconnection = require('../../database/dbconnection')
 const assert = require('assert')
 const reEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const rePass = /^[a-zA-Z0-9]{4,}$/
+const rePhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
 
 let controller = {
     standardResponse: (req, res) => {
@@ -48,6 +49,7 @@ let controller = {
         assert(typeof emailAdress === 'string', 'Email adress must be a string');
         assert.match(emailAdress, reEmail, 'Email adress must be valid')
         assert(typeof phoneNumber === 'string', 'Phone number must be a string');
+        assert.match(phoneNumber, rePhone, 'Phone number must be valid')
         next();
       } catch(err) {
         const error = {
@@ -220,10 +222,15 @@ let controller = {
                     } else {
                       throw error;
                     }
-                  } else {
+                  } else if (req.userId == userId) {
                     res.status(200).json({
                       status: 200,
                       results: `User with ID ${userId} successfully updated`,
+                    })
+                  } else {
+                    res.status(401).json({
+                      status: 401,
+                      results: `You need to be logged in to edit your profile`
                     })
                   }
                 })
@@ -249,11 +256,19 @@ let controller = {
               connection.release()
               if (error) throw error
               if (results.length > 0) {
-                connection.query('DELETE FROM user WHERE id = ' + userId)
-                res.status(200).json({
-                  status: 200,
-                  results: `User with ID ${userId} successfully deleted`,
-                })
+                if (req.userId == userId) {
+                  connection.query('DELETE FROM user WHERE id = ' + userId)
+                  res.status(200).json({
+                    status: 200,
+                    results: `User with ID ${userId} successfully deleted`,
+                  })
+                }
+                else {
+                  res.status(401).json({
+                    status: 401,
+                    results: `You need to be logged in to delete your profile`
+                  })
+                }
               } else {
                 const error = {
                   status: 400,
