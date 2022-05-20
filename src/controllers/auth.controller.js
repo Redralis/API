@@ -32,7 +32,7 @@ module.exports = {
                         console.log(token)
                         user.token = token
                         res.status(200).json({
-                          status: 200,
+                          statusCode: 200,
                           result: user,
                         })
                       }
@@ -40,16 +40,16 @@ module.exports = {
                   } else {
                     //Password did not match.
                     res.status(401).json({
-                      status: 401,
-                      result: 'Incorrect password!'
+                      statusCode: 401,
+                      message: 'Incorrect password!'
                     })
                   }
                 } else {
                   //No user was found with this email address.
                   console.log('User not found')
                   res.status(404).json({
-                    status: 404,
-                    result: 'Email not found'
+                    statusCode: 404,
+                    message: 'Email not found'
                   })
                 }
               }
@@ -61,8 +61,8 @@ module.exports = {
       const authHeader = req.headers.authorization
       if (!authHeader) {
         res.status(404).json({
-          status: 404,
-          result: "Authorization header missing"
+          statusCode: 404,
+          message: "Authorization header missing"
         })
       } else {
         //Remove the word bearer from the token
@@ -71,8 +71,8 @@ module.exports = {
         jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
           if (err) {
             res.status(401).json({
-              status: 401,
-              result: "Not authorized"
+              statusCode: 401,
+              message: "Not authorized"
             })
           } else if (payload) {
             //User has access. Add userId from payload to the request for every subsequent endpoint.
@@ -96,8 +96,8 @@ module.exports = {
         next();
       } catch(err) {
         const error = {
-          status: 400,
-          result : err.message
+          statusCode: 400,
+          message: err.message
         }
         next(error);
       }

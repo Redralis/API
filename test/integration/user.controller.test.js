@@ -63,9 +63,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('First name must be a string');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('First name must be a string');
         done();
       })
     });
@@ -85,9 +85,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Email adress must be valid');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Email adress must be valid');
         done();
       })
     });
@@ -107,9 +107,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Password must be valid');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Password must be valid');
         done();
       })
     });
@@ -129,9 +129,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(409);
-        result.should.be.a('string').that.equals('Email address is already registered');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(409);
+        message.should.be.a('string').that.equals('Email address is already registered');
         done();
       })
     });
@@ -150,8 +150,8 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(201);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(201);
         result.should.be.an('object')
         done();
       })
@@ -185,9 +185,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        expect(results).to.have.lengthOf(0);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
+        expect(result).to.have.lengthOf(0);
         done();
       })
     });
@@ -199,9 +199,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        expect(results).to.have.lengthOf(2);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
+        expect(result).to.have.lengthOf(2);
         done();
       })
     });
@@ -214,9 +214,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        expect(results).to.have.lengthOf(0);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
+        expect(result).to.have.lengthOf(0);
         done();
       })
     });
@@ -229,9 +229,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        expect(results).to.have.lengthOf(0);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
+        expect(result).to.have.lengthOf(0);
         done();
       })
     });
@@ -244,9 +244,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        expect(results).to.have.lengthOf(2);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
+        expect(result).to.have.lengthOf(2);
         done();
       })
     });
@@ -259,9 +259,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        expect(results).to.have.lengthOf(1);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
+        expect(result).to.have.lengthOf(1);
         done();
       })
     });
@@ -296,9 +296,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ThisIsNotAToken`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(401);
-        result.should.be.a('string').that.equals('Not authorized')
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('Not authorized')
         done();
       })
     });
@@ -310,8 +310,8 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status} = res.body;
-        status.should.equals(200);
+        let {statusCode} = res.body;
+        statusCode.should.equals(200);
         done();
       })
     });
@@ -345,9 +345,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ThisIsNotAToken`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(401);
-        result.should.be.a('string').that.equals('Not authorized')
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('Not authorized')
         done();
       })
     });
@@ -360,9 +360,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(404);
-        result.should.be.a('string').that.equals('User with ID 0 not found');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(404);
+        message.should.be.a('string').that.equals('User with ID 0 not found');
         done();
       })
     });
@@ -374,8 +374,8 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status} = res.body;
-        status.should.equals(200);
+        let {statusCode} = res.body;
+        statusCode.should.equals(200);
         done();
       })
     });
@@ -419,9 +419,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Email adress must be a string');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Email adress must be a string');
         done();
       })
     });
@@ -445,9 +445,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Phone number must be valid');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Phone number must be valid');
         done();
       })
     });
@@ -471,9 +471,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('User with ID 0 not found');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('User with ID 0 not found');
         done();
       })
     });
@@ -497,9 +497,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(401);
-        result.should.be.a('string').that.equals('Not authorized');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('Not authorized');
         done();
       })
     });
@@ -523,9 +523,9 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        results.should.be.a('string').that.equals('User with ID 1 successfully updated')
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(200);
+        message.should.be.a('string').that.equals('User with ID 1 successfully updated')
         done();
       })
     });
@@ -559,9 +559,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('User with ID 0 not found');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('User with ID 0 not found');
         done();
       })
     });
@@ -574,9 +574,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer `)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(401);
-        result.should.be.a('string').that.equals('Not authorized');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('Not authorized');
         done();
       })
     });
@@ -588,9 +588,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(401);
-        results.should.be.a('string').that.equals('You need to be logged in to delete your profile');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('You need to be logged in to delete your profile');
         done();
       })
     });
@@ -602,9 +602,9 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, results} = res.body;
-        status.should.equals(200);
-        results.should.be.a('string').that.equals("User with ID 1 successfully deleted");
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(200);
+        message.should.be.a('string').that.equals("User with ID 1 successfully deleted");
         done();
       })
     });

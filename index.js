@@ -21,14 +21,14 @@ app.use(authRouter)
 //Response for incorrect request
 app.all('*', (req, res) => {
   res.status(404).json({
-    status: 404,
-    result: 'End-point not found',
+    statusCode: 404,
+    message: 'End-point not found',
   })
 });
 
 //Error handler
 app.use((err, req, res, next) => {
-  res.status(err.status).json (err);
+  res.status(err.statusCode).json (err);
 });
 
 app.listen(port, () => {

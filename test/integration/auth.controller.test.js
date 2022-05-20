@@ -56,9 +56,9 @@ describe('Login', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Email adress must be a string');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Email adress must be a string');
         done();
       })
     });
@@ -74,9 +74,9 @@ describe('Login', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Email adress must be valid');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Email adress must be valid');
         done();
       })
     });
@@ -92,9 +92,9 @@ describe('Login', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(400);
-        result.should.be.a('string').that.equals('Password must be valid');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Password must be valid');
         done();
       })
     });
@@ -110,9 +110,9 @@ describe('Login', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(404);
-        result.should.be.a('string').that.equals('Email not found');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(404);
+        message.should.be.a('string').that.equals('Email not found');
         done();
       })
     });
@@ -127,8 +127,8 @@ describe('Login', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {status, result} = res.body;
-        status.should.equals(200);
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(200);
         result.should.be.an('object')
         done();
       })

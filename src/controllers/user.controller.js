@@ -7,8 +7,8 @@ const rePhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
 let controller = {
     standardResponse: (req, res) => {
       res.status(200).json({
-          status: 200,
-          result: 'Hello World!',
+          statusCode: 200,
+          message: 'Hello World!',
       });
     },
 
@@ -27,8 +27,8 @@ let controller = {
           next();
         } catch(err) {
           const error = {
-            status: 400,
-            result : err.message,
+            statusCode: 400,
+            message: err.message,
           }
           next(error);
         }
@@ -53,8 +53,8 @@ let controller = {
         next();
       } catch(err) {
         const error = {
-          status: 400,
-          result : err.message,
+          statusCode: 400,
+          message: err.message,
         }
         next(error);
       }
@@ -71,8 +71,8 @@ let controller = {
             if (error) {
               if(error.errno==1062){   
                 res.status(409).json({
-                  status: 409,
-                  result: 'Email address is already registered',
+                  statusCode: 409,
+                  message: 'Email address is already registered',
                 });
               } else {
                 throw error;
@@ -80,7 +80,7 @@ let controller = {
             } else {
             connection.release()
             res.status(201).json({
-              status: 201,
+              statusCode: 201,
               result: user,
             });
             }
@@ -134,8 +134,8 @@ let controller = {
                 if (error) throw error
                 console.log('Amount of users = ', results.length)
                 res.status(200).json({
-                  status: 200,
-                  results: results,
+                  statusCode: 200,
+                  result: results,
                 })
               }
           )
@@ -152,13 +152,13 @@ let controller = {
               if (error) throw error
               if (results.length > 0) {
                 res.status(200).json({
-                  status: 200,
-                  results: results,
+                  statusCode: 200,
+                  result: results,
                 })
               } else {
                 const error = {
-                  status: 404,
-                  result: `User with ID ${userId} not found`,
+                  statusCode: 404,
+                  message: `User with ID ${userId} not found`,
                 }
                 next(error);
               }
@@ -178,13 +178,13 @@ let controller = {
               if (error) throw error
               if (results.length > 0) {
                 res.status(200).json({
-                  status: 200,
-                  results: results,
+                  statusCode: 200,
+                  result: results,
                 })
               } else {
                 const error = {
-                  status: 404,
-                  result: `User with ID ${userId} not found`,
+                  statusCode: 404,
+                  message: `User with ID ${userId} not found`,
                 }
                 next(error);
               }
@@ -216,28 +216,28 @@ let controller = {
                   if (error) {
                     if(error.errno==1062){   
                       res.status(422).json({
-                        status: 422,
-                        result: 'Email address is already registered, or id already exists',
+                        statusCode: 422,
+                        message: 'Email address is already registered, or id already exists',
                       });
                     } else {
                       throw error;
                     }
                   } else if (req.userId == userId) {
                     res.status(200).json({
-                      status: 200,
-                      results: `User with ID ${userId} successfully updated`,
+                      statusCode: 200,
+                      message: `User with ID ${userId} successfully updated`,
                     })
                   } else {
                     res.status(401).json({
-                      status: 401,
-                      results: `You need to be logged in to edit your profile`
+                      statusCode: 401,
+                      message: `You need to be logged in to edit your profile`
                     })
                   }
                 })
               } else {
                 const error = {
-                  status: 400,
-                  result: `User with ID ${userId} not found`,
+                  statusCode: 400,
+                  message: `User with ID ${userId} not found`,
                 }
                 next(error);
               }
@@ -259,20 +259,20 @@ let controller = {
                 if (req.userId == userId) {
                   connection.query('DELETE FROM user WHERE id = ' + userId)
                   res.status(200).json({
-                    status: 200,
-                    results: `User with ID ${userId} successfully deleted`,
+                    statusCode: 200,
+                    message: `User with ID ${userId} successfully deleted`,
                   })
                 }
                 else {
                   res.status(401).json({
-                    status: 401,
-                    results: `You need to be logged in to delete your profile`
+                    statusCode: 401,
+                    message: `You need to be logged in to delete your profile`
                   })
                 }
               } else {
                 const error = {
-                  status: 400,
-                  result: `User with ID ${userId} not found`,
+                  statusCode: 400,
+                  message: `User with ID ${userId} not found`,
                 }
                 next(error);
               }
