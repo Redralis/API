@@ -156,7 +156,7 @@ describe('Manage users', () => {
     });
   });
 
-  describe('UC-202 - Show all users /api/user', () => {
+  describe('UC-202 - Show users /api/user', () => {
     beforeEach((done) => {
       console.log('beforeEach called')
       //Recreating the testdatabase so the tests can be executed.

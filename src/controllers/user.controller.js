@@ -87,8 +87,9 @@ let controller = {
     },
 
     getAllUsers: (req, res) => {
-      let {firstName, isActive} = req.query
-      console.log(`firstName = ${firstName} isActive = ${isActive}`)
+      let {firstName, isActive, amount} = req.query
+      let array = []
+      console.log(`firstName = ${firstName} isActive = ${isActive} amount = ${amount}`)
 
       let queryString = 'SELECT * FROM user'
       if (firstName || isActive) {
@@ -96,16 +97,36 @@ let controller = {
         if (firstName) {
           queryString += 'firstName LIKE ?'
         }
+        if (firstName && isActive) {
+          queryString += ' AND '
+        }
+        if (isActive) {
+          queryString += 'isActive = ?'
+        }
+      }
+      if (amount) {
+        if (!isNaN(amount)) {
+          queryString += ' ORDER BY id LIMIT ' + amount
+        }
       }
       queryString += ';'
       console.log(queryString)
 
-      firstName = '%' + firstName + '%'
+      if (firstName) {
+        firstName = '%' + firstName + '%'
+        array.push(firstName)
+      }
+      if (isActive) {
+        array.push(isActive)
+      }
+      if (amount) {
+        array.push(amount)
+      }
 
       dbconnection.getConnection(function (err, connection) {
           if (err) throw err
           connection.query(
-            queryString, [firstName, isActive],
+            queryString, array,
               function (error, results) {
                 connection.release()
                 if (error) throw error
