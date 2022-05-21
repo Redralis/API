@@ -1,11 +1,12 @@
-const express = require('express');
-const app = express();
-require('dotenv').config();
-const port = process.env.PORT;
-const bodyParser = require('body-parser');
-const userRouter = require('./src/routes/user.routes');
-const authRouter = require ('./src/routes/auth.routes')
-const { env } = require('process');
+const express = require('express')
+const app = express()
+require('dotenv').config()
+const port = process.env.PORT
+const bodyParser = require('body-parser')
+const userRouter = require('./src/routes/user.routes')
+const authRouter = require('./src/routes/auth.routes')
+const mealRouter = require('./src/routes/meal.routes')
+const { env } = require('process')
 
 app.use(bodyParser.json());
 
@@ -15,8 +16,9 @@ app.all('*', (req, res, next) => {
   next()
 });
 
-app.use(userRouter);
+app.use(userRouter)
 app.use(authRouter)
+app.use(mealRouter)
 
 //Response for incorrect request
 app.all('*', (req, res) => {
