@@ -1,4 +1,4 @@
-process.env.DB_DATABASE = process.env.DB_DATABASE || 'share_a_meal'
+process.env.DB_DATABASE = process.env.DB_DATABASE || 'share_a_meal_testdb'
 
 const chai = require('chai')
 const chaiHttp = require('chai-http')
