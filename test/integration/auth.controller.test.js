@@ -21,30 +21,23 @@ console.log = function() {};
 
 describe('Login', () => {
   before((done) => {
-    console.log('before: hier zorg je eventueel dat de precondities correct zijn')
-    console.log('before done')
+    dbconnection.getConnection(function (err, connection) {
+      if (err) throw err // not connected!
+      connection.query(
+          CLEAR_DB + INSERT_USER,
+          function (error, results, fields) {
+              // When done with the connection, release it.
+              connection.release()
+              // Handle error after the release.
+              if (error) throw error
+              console.log('beforeEach done')
+          }
+      )
+    })
     done()
   })
 
   describe('UC-101 - Login /api/auth/login', () => {
-    beforeEach((done) => {
-      console.log('beforeEach called')
-      //Recreating the testdatabase so the tests can be executed.
-      dbconnection.getConnection(function (err, connection) {
-        if (err) throw err // not connected!
-        connection.query(
-            CLEAR_DB + INSERT_USER,
-            function (error, results, fields) {
-                // When done with the connection, release it.
-                connection.release()
-                // Handle error after the release.
-                if (error) throw error
-                console.log('beforeEach done')
-                done()
-            }
-        )
-      })
-    })
 
     it('TC-101-1 - When a required input is missing, a valid error should be returned', (done) => {
       chai
