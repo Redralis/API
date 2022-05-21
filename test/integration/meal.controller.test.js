@@ -135,6 +135,39 @@ describe('Manage meals', () => {
     });
   });
 
+  describe('UC-302 - Update a single meal /api/meal', () => {
+    beforeEach(async () => {
+      const promisePool = dbconnection.promise();
+      await promisePool.query("DELETE IGNORE FROM meal_participants_user");
+      await promisePool.query("DELETE IGNORE FROM  meal");
+      await promisePool.query("DELETE IGNORE FROM  user");
+      await promisePool.query(
+        'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+        '(1, "John", "Doe", "john.doe@mail.com", "secret", "Lovensdijkstraat 73", "Breda"),' +
+        '(2, "Lucas", "Kleijn", "lucas.kleijn@mail.com", "password", "Hogeschoollaan 91", "Breda");'
+      );
+      await promisePool.query(
+        'INSERT INTO `meal` (`id`, `name`, `description`, `imageUrl`, `dateTime`, `maxAmountOfParticipants`, `price`, `cookId`) VALUES' +
+        "(1, 'Fries', 'Fries with a side of salad', 'www.fries.com', NOW(), 5, 6.50, 1)," +
+        "(2, 'Fried chicken', 'Some fried chicken for your delight.', 'www.chicken.com', NOW(), 3, 10.5, 2);"
+      );
+    });
+
+    it('TC-302-1 - When a required input is missing, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/1')
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('Authorization header missing')
+        done();
+      })
+    });
+  });
+
   describe('UC-303 - Get all meals /api/meal', () => {
     beforeEach(async () => {
       const promisePool = dbconnection.promise();

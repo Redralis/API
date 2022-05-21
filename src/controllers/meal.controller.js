@@ -2,7 +2,7 @@ const dbconnection = require('../../database/dbconnection')
 const assert = require('assert')
 
 let controller = {
-    validateNewMeal: (req, res, next) => {
+    validateMeal: (req, res, next) => {
         let meal = req.body;
         let{name, description, isActive, isVega, isVegan, isToTakeHome, dateTime, imageUrl, allergenes, maxAmountOfParticipants, price} = meal;
         try {
@@ -60,6 +60,52 @@ let controller = {
                   });
                 });
           })
+      })
+    },
+
+    updateMeal: (req, res, next) => {
+      const mealId = req.params.mealId
+      let meal = req.body
+      if (meal.isActive) { meal.isActive = 1 } else { meal.isActive = 0 }
+      if (meal.isVega) { meal.isVega = 1 } else { meal.isVega = 0 }
+      if (meal.isVegan) { meal.isVegan = 1 } else { meal.isVegan = 0 }
+      if (meal.isToTakeHome) { meal.isToTakeHome = 1 } else { meal.isToTakeHome = 0 }
+      dbconnection.getConnection(function (err, connection, next) {
+        if (err) throw err
+        connection.query("SELECT * FROM meal WHERE id = " + mealId, function(error, results) {
+          let meal = results[0]
+          if (meal.cookId == req.userId) {
+            connection.query("UPDATE meal SET name = '" + meal.name + "', description = '" + meal.description + "', isActive = " + 
+            meal.isActive + ", isVega = " + meal.isVega + ", isVegan = " + meal.isVegan + ", isToTakeHome = " + meal.isToTakeHome +
+            ", dateTime = '" + meal.dateTime + "', imageUrl = '" + meal.imageUrl + "', allergenes = '" + meal.allergenes +
+            "', maxAmountOfParticipants = " + meal.maxAmountOfParticipants + ", price = " + meal.price + " WHERE id = " + mealId,
+              function (error) {
+                if (error) throw error
+                connection.query(
+                  "SELECT * FROM meal WHERE id = '" + mealId + "'",
+                    function (error, results) {
+                      let fullMeal = results[0]
+                      fullMeal.allergenes = meal.allergenes
+                      connection.query("SELECT * FROM user WHERE id = "+ req.userId, function (error, results) {
+                        let user = results[0]
+                        fullMeal.cook = user
+                        connection.release()
+                        if (error) throw error
+                        console.log(fullMeal)
+                        res.status(201).json({
+                          statusCode: 201,
+                          result: fullMeal
+                        });
+                      });
+                    });
+              })
+            } else {
+              res.status(401).json({
+                statusCode: 401,
+                message: `You need to be the owner of a meal to edit it`
+              })
+            }
+          });
       })
     },
 
