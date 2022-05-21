@@ -158,11 +158,156 @@ describe('Manage meals', () => {
       chai
       .request(server)
       .put('/api/meal/1')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        //Name is missing
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Name must be a string')
+        done();
+      })
+    });
+
+    it('TC-302-2 - When a user who is not logged in tries to edit a meal, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/1')
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
       .end((err, res) => {
         res.should.be.an('object');
         let {statusCode, message} = res.body;
         statusCode.should.equals(401);
         message.should.be.a('string').that.equals('Authorization header missing')
+        done();
+      })
+    });
+
+    it('TC-302-3 - When a user tries to edit a meal they do not own, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/2')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(403);
+        message.should.be.a('string').that.equals('You need to be the owner of a meal to edit it')
+        done();
+      })
+    });
+
+    it('TC-302-4 - When a user tries to edit a meal that does not exist, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/3')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(404);
+        message.should.be.a('string').that.equals('Meal with ID 3 not found')
+        done();
+      })
+    });
+
+    it('TC-302-5 - When a user successfully updates a meal, a valid response should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/1')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(201);
+        result.should.be.an('object')
         done();
       })
     });

@@ -73,39 +73,46 @@ let controller = {
       dbconnection.getConnection(function (err, connection, next) {
         if (err) throw err
         connection.query("SELECT * FROM meal WHERE id = " + mealId, function(error, results) {
-          let meal = results[0]
-          if (meal.cookId == req.userId) {
-            connection.query("UPDATE meal SET name = '" + meal.name + "', description = '" + meal.description + "', isActive = " + 
-            meal.isActive + ", isVega = " + meal.isVega + ", isVegan = " + meal.isVegan + ", isToTakeHome = " + meal.isToTakeHome +
-            ", dateTime = '" + meal.dateTime + "', imageUrl = '" + meal.imageUrl + "', allergenes = '" + meal.allergenes +
-            "', maxAmountOfParticipants = " + meal.maxAmountOfParticipants + ", price = " + meal.price + " WHERE id = " + mealId,
-              function (error) {
-                if (error) throw error
-                connection.query(
-                  "SELECT * FROM meal WHERE id = '" + mealId + "'",
-                    function (error, results) {
-                      let fullMeal = results[0]
-                      fullMeal.allergenes = meal.allergenes
-                      connection.query("SELECT * FROM user WHERE id = "+ req.userId, function (error, results) {
-                        let user = results[0]
-                        fullMeal.cook = user
-                        connection.release()
-                        if (error) throw error
-                        console.log(fullMeal)
-                        res.status(201).json({
-                          statusCode: 201,
-                          result: fullMeal
+          if (results.length > 0) {
+            let meal = results[0]
+            if (meal.cookId == req.userId) {
+              connection.query("UPDATE meal SET name = '" + meal.name + "', description = '" + meal.description + "', isActive = " + 
+              meal.isActive + ", isVega = " + meal.isVega + ", isVegan = " + meal.isVegan + ", isToTakeHome = " + meal.isToTakeHome +
+              ", dateTime = '" + meal.dateTime + "', imageUrl = '" + meal.imageUrl + "', allergenes = '" + meal.allergenes +
+              "', maxAmountOfParticipants = " + meal.maxAmountOfParticipants + ", price = " + meal.price + " WHERE id = " + mealId,
+                function (error) {
+                  if (error) throw error
+                  connection.query(
+                    "SELECT * FROM meal WHERE id = '" + mealId + "'",
+                      function (error, results) {
+                        let fullMeal = results[0]
+                        fullMeal.allergenes = meal.allergenes
+                        connection.query("SELECT * FROM user WHERE id = "+ req.userId, function (error, results) {
+                          let user = results[0]
+                          fullMeal.cook = user
+                          connection.release()
+                          if (error) throw error
+                          console.log(fullMeal)
+                          res.status(201).json({
+                            statusCode: 201,
+                            result: fullMeal
+                          });
                         });
                       });
-                    });
-              })
-            } else {
-              res.status(401).json({
-                statusCode: 401,
-                message: `You need to be the owner of a meal to edit it`
-              })
-            }
-          });
+                })
+              } else {
+                res.status(403).json({
+                  statusCode: 403,
+                  message: `You need to be the owner of a meal to edit it`
+                })
+              }
+          } else {
+            res.status(404).json({
+              statusCode: 404,
+              message: `Meal with ID ${mealId} not found`
+            })
+          }
+        });
       })
     },
 
