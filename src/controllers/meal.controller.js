@@ -74,8 +74,8 @@ let controller = {
         if (err) throw err
         connection.query("SELECT * FROM meal WHERE id = " + mealId, function(error, results) {
           if (results.length > 0) {
-            let meal = results[0]
-            if (meal.cookId == req.userId) {
+            let tempMeal = results[0]
+            if (tempMeal.cookId == req.userId) {
               connection.query("UPDATE meal SET name = '" + meal.name + "', description = '" + meal.description + "', isActive = " + 
               meal.isActive + ", isVega = " + meal.isVega + ", isVegan = " + meal.isVegan + ", isToTakeHome = " + meal.isToTakeHome +
               ", dateTime = '" + meal.dateTime + "', imageUrl = '" + meal.imageUrl + "', allergenes = '" + meal.allergenes +
@@ -83,7 +83,7 @@ let controller = {
                 function (error) {
                   if (error) throw error
                   connection.query(
-                    "SELECT * FROM meal WHERE id = '" + mealId + "'",
+                    "SELECT * FROM meal WHERE id = " + mealId,
                       function (error, results) {
                         let fullMeal = results[0]
                         fullMeal.allergenes = meal.allergenes
