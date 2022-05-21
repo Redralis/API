@@ -135,6 +135,184 @@ describe('Manage meals', () => {
     });
   });
 
+  describe('UC-302 - Update a single meal /api/meal', () => {
+    beforeEach(async () => {
+      const promisePool = dbconnection.promise();
+      await promisePool.query("DELETE IGNORE FROM meal_participants_user");
+      await promisePool.query("DELETE IGNORE FROM  meal");
+      await promisePool.query("DELETE IGNORE FROM  user");
+      await promisePool.query(
+        'INSERT INTO `user` (`id`, `firstName`, `lastName`, `emailAdress`, `password`, `street`, `city` ) VALUES' +
+        '(1, "John", "Doe", "john.doe@mail.com", "secret", "Lovensdijkstraat 73", "Breda"),' +
+        '(2, "Lucas", "Kleijn", "lucas.kleijn@mail.com", "password", "Hogeschoollaan 91", "Breda");'
+      );
+      await promisePool.query(
+        'INSERT INTO `meal` (`id`, `name`, `description`, `imageUrl`, `dateTime`, `maxAmountOfParticipants`, `price`, `cookId`) VALUES' +
+        "(1, 'Fries', 'Fries with a side of salad', 'www.fries.com', NOW(), 5, 6.50, 1)," +
+        "(2, 'Fried chicken', 'Some fried chicken for your delight.', 'www.chicken.com', NOW(), 3, 10.5, 2);"
+      );
+    });
+
+    it('TC-302-1 - When a required input is missing, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/1')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        //Name is missing
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(400);
+        message.should.be.a('string').that.equals('Name must be a string')
+        done();
+      })
+    });
+
+    it('TC-302-2 - When a user who is not logged in tries to edit a meal, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/1')
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(401);
+        message.should.be.a('string').that.equals('Authorization header missing')
+        done();
+      })
+    });
+
+    it('TC-302-3 - When a user tries to edit a meal they do not own, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/2')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(403);
+        message.should.be.a('string').that.equals('You need to be the owner of a meal to edit it')
+        done();
+      })
+    });
+
+    it('TC-302-4 - When a user tries to edit a meal that does not exist, a valid error should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/3')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, message} = res.body;
+        statusCode.should.equals(404);
+        message.should.be.a('string').that.equals('Meal with ID 3 not found')
+        done();
+      })
+    });
+
+    it('TC-302-5 - When a user successfully updates a meal, a valid response should be returned', (done) => {
+      console.log(token)
+      chai
+      .request(server)
+      .put('/api/meal/1')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        "name": "Ice cream",
+        "description": "A royal dessert",
+        "isActive": true,
+        "isVega": false,
+        "isVegan": true,
+        "isToTakeHome": false,
+        "imageUrl": "www.icecream.com",
+        "dateTime": "2022-05-21 14:41:41",
+        "maxAmountOfParticipants": 2,
+        "price": 12.5,
+        "allergenes": [
+          "gluten",
+          "noten",
+          "lactose"
+        ]
+      })
+      .end((err, res) => {
+        res.should.be.an('object');
+        let {statusCode, result} = res.body;
+        statusCode.should.equals(201);
+        result.should.be.an('object')
+        done();
+      })
+    });
+  });
+
   describe('UC-303 - Get all meals /api/meal', () => {
     beforeEach(async () => {
       const promisePool = dbconnection.promise();

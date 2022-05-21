@@ -4,7 +4,10 @@ const mealController = require('../controllers/meal.controller')
 const authController = require('../controllers/auth.controller')
 
 //UC-301 - Create new meal
-router.post('/api/meal', authController.validate, mealController.validateNewMeal, mealController.addMeal);
+router.post('/api/meal', authController.validate, mealController.validateMeal, mealController.addMeal);
+
+//UC-302 - Update single meal by ID
+router.put('/api/meal/:mealId', authController.validate, mealController.validateMeal, mealController.updateMeal);
   
 //UC-303 - Get all meals
 router.get('/api/meal', mealController.getAllMeals);
