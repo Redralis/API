@@ -152,7 +152,8 @@ describe('Manage users', () => {
         res.should.be.an('object');
         let {statusCode, result} = res.body;
         statusCode.should.equals(201);
-        result.should.be.an('object')
+        result.should.be.an('object').that.has.all.keys("id", "firstName", "lastName", "isActive", "emailAdress", "password", 
+        "phoneNumber", "street", "city")
         done();
       })
     });
@@ -310,8 +311,10 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {statusCode} = res.body;
+        let {statusCode, result} = res.body;
         statusCode.should.equals(200);
+        result.should.be.an('object').that.has.all.keys("id", "firstName", "lastName", "isActive", "emailAdress", "password", 
+        "phoneNumber", "street", "city")
         done();
       })
     });
@@ -374,8 +377,10 @@ describe('Manage users', () => {
       .set('Authorization', `Bearer ${token}`)
       .end((err, res) => {
         res.should.be.an('object');
-        let {statusCode} = res.body;
+        let {statusCode, result} = res.body;
         statusCode.should.equals(200);
+        result.should.be.an('object').that.has.all.keys("id", "firstName", "lastName", "isActive", "emailAdress", "password", 
+        "phoneNumber", "street", "city")
         done();
       })
     });
@@ -523,9 +528,10 @@ describe('Manage users', () => {
       })
       .end((err, res) => {
         res.should.be.an('object');
-        let {statusCode, message} = res.body;
+        let {statusCode, result} = res.body;
         statusCode.should.equals(200);
-        message.should.be.a('string').that.equals('User with ID 1 successfully updated')
+        result.should.be.an('object').that.has.all.keys("id", "firstName", "lastName", "isActive", "emailAdress", "password", 
+        "phoneNumber", "street", "city")
         done();
       })
     });

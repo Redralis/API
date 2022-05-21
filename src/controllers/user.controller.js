@@ -3,6 +3,7 @@ const assert = require('assert')
 const reEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 const rePass = /^[a-zA-Z0-9]{4,}$/
 const rePhone = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+const selectWithoutRoles = "id, firstName, lastName, street, city, isActive, emailAdress, password, phoneNumber"
 
 let controller = {
     standardResponse: (req, res) => {
@@ -78,10 +79,17 @@ let controller = {
                 throw error;
               }
             } else {
-            connection.release()
-            res.status(201).json({
-              statusCode: 201,
-              result: user,
+            connection.query(
+              "SELECT " + selectWithoutRoles + " FROM user WHERE emailAdress = '" + user.emailAdress + "'",
+                function (error, results) {
+                  connection.release()
+                  if (error) throw error
+                  user = results[0]
+                  console.log(user)
+                  res.status(201).json({
+                    statusCode: 201,
+                    result: user
+                  });
             });
             }
           })
@@ -93,7 +101,7 @@ let controller = {
       let array = []
       console.log(`firstName = ${firstName} isActive = ${isActive} amount = ${amount}`)
 
-      let queryString = 'SELECT * FROM user'
+      let queryString = 'SELECT ' + selectWithoutRoles + ' FROM user'
       if (firstName || isActive) {
         queryString += ' WHERE '
         if (firstName) {
@@ -146,14 +154,15 @@ let controller = {
       dbconnection.getConnection(function (err, connection) {
         if (err) throw err
         connection.query(
-            'SELECT * FROM user WHERE id = ' + req.userId,
+            'SELECT ' + selectWithoutRoles + ' FROM user WHERE id = ' + req.userId,
             function (error, results) {
               connection.release()
               if (error) throw error
               if (results.length > 0) {
+                let user = results[0]
                 res.status(200).json({
                   statusCode: 200,
-                  result: results,
+                  result: user,
                 })
               } else {
                 const error = {
@@ -172,14 +181,15 @@ let controller = {
       dbconnection.getConnection(function (err, connection) {
         if (err) throw err
         connection.query(
-            'SELECT * FROM user WHERE id = ' + userId,
+            'SELECT ' + selectWithoutRoles + ' FROM user WHERE id = ' + userId,
             function (error, results) {
               connection.release()
               if (error) throw error
               if (results.length > 0) {
+                let user = results[0]
                 res.status(200).json({
                   statusCode: 200,
-                  result: results,
+                  result: user,
                 })
               } else {
                 const error = {
@@ -203,7 +213,7 @@ let controller = {
       dbconnection.getConnection(function (err, connection) {
         if (err) throw err
         connection.query(
-            'SELECT * FROM user WHERE id = ' + userId,
+            'SELECT ' + selectWithoutRoles + ' FROM user WHERE id = ' + userId,
             function (error, results) {
               connection.release()
               if (error) throw error
@@ -223,9 +233,10 @@ let controller = {
                       throw error;
                     }
                   } else if (req.userId == userId) {
+                    user = results[0]
                     res.status(200).json({
                       statusCode: 200,
-                      message: `User with ID ${userId} successfully updated`,
+                      result: user,
                     })
                   } else {
                     res.status(401).json({
@@ -251,7 +262,7 @@ let controller = {
       dbconnection.getConnection(function (err, connection) {
         if (err) throw err
         connection.query(
-            'SELECT * FROM user WHERE id = ' + userId,
+            'SELECT ' + selectWithoutRoles + ' FROM user WHERE id = ' + userId,
             function (error, results) {
               connection.release()
               if (error) throw error
