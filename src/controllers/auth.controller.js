@@ -7,7 +7,7 @@ module.exports = {
       //Asserting input for validation
       const { emailAdress, password } = req.body
 
-      const queryString = 'SELECT id, firstName, lastName, emailAdress, password FROM USER WHERE emailAdress=?'
+      const queryString = 'SELECT id, firstName, lastName, emailAdress, password FROM user WHERE emailAdress=?'
       
       dbconnection.getConnection(function (err, connection) {
           if (err) throw err
