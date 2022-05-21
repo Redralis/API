@@ -3,7 +3,7 @@ name: node.js.test
 on:
     push:
         branches:
-            - main
+            - development
 
 jobs:
     integrationtests:
