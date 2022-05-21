@@ -60,8 +60,8 @@ module.exports = {
     validate: (req, res, next) => {
       const authHeader = req.headers.authorization
       if (!authHeader) {
-        res.status(404).json({
-          statusCode: 404,
+        res.status(401).json({
+          statusCode: 401,
           message: "Authorization header missing"
         })
       } else {

@@ -6,7 +6,7 @@ const server = require('../../index')
 require('dotenv').config()
 const dbconnection = require('../../database/dbconnection')
 const { expect } = require('chai')
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY1MzA0NzYyMywiZXhwIjoxNjUzNjUyNDIzfQ.gdnFQWZX7V4oZ1doiAcLpkHNPlED9IY5opQsghOkilc"
+const token = process.env.TESTING_TOKEN
 
 chai.should()
 chai.use(chaiHttp)
