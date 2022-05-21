@@ -64,17 +64,19 @@ let controller = {
     },
 
     getAllMeals: (req, res) => {
+      let i = 0
       dbconnection.getConnection(function (err, connection) {
           if (err) throw err
           connection.query(
             "SELECT * FROM meal",
               function (error, results) {
+                let meals = results
                 connection.release()
                 if (error) throw error
                 console.log('Amount of meals = ', results.length)
                 res.status(200).json({
                   statusCode: 200,
-                  result: results,
+                  result: meals,
                 })
               }
           )
